@@ -556,5 +556,32 @@ namespace vrwebapi.Controllers
             }
 
         }
+
+        [HttpPost("teacherjoin")]
+
+        public Response teacherjoin([FromBody] Teacherassigned model)
+        {
+            Response response = new Response();
+            bool alreadyexisted = dbcontext.teacherassigneds.Any(t => t.teacherid == model.teacherid && t.classid == model.classid);
+            if (alreadyexisted)
+            {
+                response.statuscode = 400;
+                response.statusmessage = "Same teacher already joined";
+                return response;
+            }
+            Teacherassigned teacher = new Teacherassigned 
+            { 
+                classid=model.classid,
+                teacherid=model.teacherid
+            };
+
+            dbcontext.teacherassigneds.Add(teacher);
+            dbcontext.SaveChanges();
+
+            response.statuscode = 200;
+            response.statusmessage = "joined";
+            return response;
+
+        }
     }
 }
