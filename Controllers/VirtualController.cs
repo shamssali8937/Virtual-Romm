@@ -9,6 +9,7 @@ using System.Text;
 using vrwebapi.Data;
 using vrwebapi.Models;
 
+
 namespace vrwebapi.Controllers
 {
     [Route("api/[controller]")]
@@ -44,6 +45,7 @@ namespace vrwebapi.Controllers
                 response.statusmessage = "Username is Already Taken";
                 return response;
             }
+
 
             User user = new User
             {
