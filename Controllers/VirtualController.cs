@@ -573,6 +573,8 @@ namespace vrwebapi.Controllers
             { 
                 classid=model.classid,
                 teacherid=model.teacherid
+
+
             };
 
             dbcontext.teacherassigneds.Add(teacher);
@@ -582,6 +584,64 @@ namespace vrwebapi.Controllers
             response.statusmessage = "joined";
             return response;
 
+        }
+
+        [Authorize]
+        [HttpGet("Teacherclasses")]
+
+        public Response Teacherclasses()
+        {
+            Response response = new Response();
+
+            ClaimsPrincipal userclaims = User;
+            var identity = userclaims.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                var claim = identity.Claims;
+                var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                if (email != null)
+                {
+                    int studentid = dbcontext.teachers.Include(u => u.user).Where(u => u.user.Email == email.Value).Select(t=>t.teacherid).FirstOrDefault();
+
+                    if (studentid != 0)
+                    {
+                        var list = dbcontext.teacherassigneds.Include(c => c.classes).Where(t=>t.teacherid == studentid).Select(c => c.classes).ToList();
+                        if (list != null)
+                        {
+                            response.statuscode = 200;
+                            response.statusmessage = "found";
+                            response.classes = list;
+                            return response;
+                        }
+                        else
+                        {
+                            response.statuscode = 100;
+                            response.statusmessage = "no class found";
+                            return response;
+                        }
+                    }
+                    else
+                    {
+                        response.statuscode = 100;
+                        response.statusmessage = "no Teacher exist";
+                        return response;
+                    }
+
+                }
+                else
+                {
+                    response.statuscode = 100;
+                    response.statusmessage = "no user exist";
+                    return response;
+                }
+            }
+            else
+            {
+                response.statuscode = 100;
+                response.statusmessage = "error";
+                return response;
+            }
         }
     }
 }
