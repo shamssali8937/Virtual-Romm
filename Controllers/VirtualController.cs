@@ -425,6 +425,25 @@ namespace vrwebapi.Controllers
 
         }
 
+        [HttpPost("Getcourse")]
+        public Response Getcourse([FromBody] int classid)
+        {
+            Response response = new Response();
+            int course = dbcontext.classes.Include(c => c.course).Where(cl => cl.classid == classid).Select(c => c.courseid).FirstOrDefault();
+            if(course!=0)
+            {
+                response.statuscode = 200;
+                response.statusmessage = course.ToString();
+                return response;
+            }
+            else
+            {
+                response.statuscode = 400;
+                response.statusmessage = "not found";
+                return response;
+            }
+        }
+
         [HttpPost("courseid")]
 
         public Response courseid([FromBody] Name model)
