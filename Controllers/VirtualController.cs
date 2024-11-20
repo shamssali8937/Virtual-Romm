@@ -426,10 +426,10 @@ namespace vrwebapi.Controllers
         }
 
         [HttpPost("Getcourse")]
-        public Response Getcourse([FromBody] int classid)
+        public Response Getcourse([FromBody] Classid model)
         {
             Response response = new Response();
-            int course = dbcontext.classes.Include(c => c.course).Where(cl => cl.classid == classid).Select(c => c.courseid).FirstOrDefault();
+            int course = dbcontext.classes.Include(c => c.course).Where(cl => cl.classid == model.classid).Select(c => c.courseid).FirstOrDefault();
             if(course!=0)
             {
                 response.statuscode = 200;
@@ -501,6 +501,9 @@ namespace vrwebapi.Controllers
                 time=model.time,
                 description=model.description
             };
+
+            dbcontext.assignments.Add(assignment);
+            dbcontext.SaveChanges();
 
             response.statuscode = 200;
             response.statusmessage = "Assignment Assigned To The Class";
