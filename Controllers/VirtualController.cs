@@ -709,10 +709,10 @@ namespace vrwebapi.Controllers
 
         [HttpPost("SubmissionList")]
 
-        public Response SubmissionList([FromBody] Name model)
+        public Response SubmissionList([FromBody] Assignmentid model)
         {
             Response response = new Response();
-            var list = dbcontext.submissions.Include(a => a.assignment).Where(a => a.assignment.Classes.classname == model.name).Select(a => new submissiondetail
+            var list = dbcontext.submissions.Include(a => a.assignment).Where(a => a.assignment.aid == model.Id).Select(a => new submissiondetail
             {
                 Assignment = a.assignment,
                 submissionid = a.sid,
