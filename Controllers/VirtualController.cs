@@ -687,5 +687,53 @@ namespace vrwebapi.Controllers
             }
         }
 
+        [HttpPost("submit")]
+
+        public Response submit([FromBody] Submission model)
+        {
+            Response response = new Response();
+            var submission = new Submission { 
+                aid=model.aid,
+                studentid=model.studentid,
+                description=model.description,
+                file=model.file
+            };
+
+            dbcontext.submissions.Add(submission);
+            dbcontext.SaveChanges();
+
+            response.statuscode = 200;
+            response.statusmessage = "Submitted";
+            return response;
+        }
+
+        [HttpPost("SubmissionList")]
+
+        public Response SubmissionList([FromBody] Name model)
+        {
+            Response response = new Response();
+            var list = dbcontext.submissions.Include(a => a.assignment).Where(a => a.assignment.Classes.classname == model.name).Select(a => new submissiondetail
+            {
+                Assignment = a.assignment,
+                submissionid = a.sid,
+                student = a.student.user.Name
+            }).ToList();
+
+            if(list!=null)
+            {
+                response.statuscode = 200;
+                response.statusmessage = "found";
+                response.submission = list;
+                return response;
+            }
+            else
+            {
+                response.statuscode = 400;
+                response.statusmessage = "not found";
+                return response;
+            }
+
+        }
+
     }
 }

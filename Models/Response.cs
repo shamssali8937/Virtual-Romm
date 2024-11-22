@@ -14,5 +14,6 @@ public class Response
 
     public List<Assignment>? assignment { get; set; }
 
+    public List<submissiondetail>? submission { get; set; }
 
 }
