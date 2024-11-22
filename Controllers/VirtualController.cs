@@ -126,26 +126,26 @@ namespace vrwebapi.Controllers
 
         [Authorize]
         [HttpGet("Classlit")]
-        
+
         public Response Classlist()
         {
 
-            Response response=new Response();
+            Response response = new Response();
 
             ClaimsPrincipal userclaims = User;
             var identity = userclaims.Identity as ClaimsIdentity;
 
-            if(identity != null)
+            if (identity != null)
             {
                 var claim = identity.Claims;
                 var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-                if(email!=null)
+                if (email != null)
                 {
-                    int studentid = dbcontext.students.Include(u=>u.user).Where(u=>u.user.Email==email.Value).Select(s=>s.studentid).FirstOrDefault();
+                    int studentid = dbcontext.students.Include(u => u.user).Where(u => u.user.Email == email.Value).Select(s => s.studentid).FirstOrDefault();
 
-                    if(studentid!=0)
+                    if (studentid != 0)
                     {
-                        var list = dbcontext.enrollments.Include(c => c.classes).Where(e => e.studentid == studentid).Select(c=>c.classes).ToList();
+                        var list = dbcontext.enrollments.Include(c => c.classes).Where(e => e.studentid == studentid).Select(c => c.classes).ToList();
                         if (list != null)
                         {
                             response.statuscode = 200;
@@ -193,16 +193,16 @@ namespace vrwebapi.Controllers
 
             var identity = userclaim.Identity as ClaimsIdentity;
 
-            if(identity != null)
+            if (identity != null)
             {
                 var claim = identity.Claims;
                 var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-                if (email != null) 
+                if (email != null)
                 {
                     var user = dbcontext.users.FirstOrDefault(u => u.Email == email.Value);
                     if (user != null)
                     {
-                        response.statuscode=200;
+                        response.statuscode = 200;
                         response.statusmessage = "found";
                         response.user = user;
                         return response;
@@ -217,7 +217,7 @@ namespace vrwebapi.Controllers
                 }
             }
             response.statuscode = 100;
-            response.statusmessage="error";
+            response.statusmessage = "error";
             return response;
         }
 
@@ -228,10 +228,10 @@ namespace vrwebapi.Controllers
         {
             Response response = new Response();
 
-            var course= new Course 
+            var course = new Course
             {
-                coursename=model.coursename,
-                description=model.description
+                coursename = model.coursename,
+                description = model.description
             };
 
             dbcontext.courses.Add(course);
@@ -239,7 +239,7 @@ namespace vrwebapi.Controllers
 
 
             response.statuscode = 200;
-            response.statusmessage="Course Added";
+            response.statusmessage = "Course Added";
             return response;
 
         }
@@ -253,7 +253,7 @@ namespace vrwebapi.Controllers
 
             var courses = dbcontext.courses.ToList();
 
-            if(courses != null )
+            if (courses != null)
             {
                 response.statuscode = 200;
                 response.statusmessage = "Course List";
@@ -274,7 +274,7 @@ namespace vrwebapi.Controllers
         {
             Response response = new Response();
 
-            if (model.courseid==0||string.IsNullOrEmpty(model.classname))
+            if (model.courseid == 0 || string.IsNullOrEmpty(model.classname))
             {
                 response.statuscode = 400;
                 response.statusmessage = "Invalid data";
@@ -283,9 +283,9 @@ namespace vrwebapi.Controllers
 
             var classes = new Classes
             {
-                classname=model.classname,
-                courseid=model.courseid,
-                description=model.description
+                classname = model.classname,
+                courseid = model.courseid,
+                description = model.description
             };
 
             dbcontext.classes.Add(classes);
@@ -298,27 +298,27 @@ namespace vrwebapi.Controllers
 
         [HttpPost("Join")]
 
-        public Response Join([FromBody] Enrollments model )
+        public Response Join([FromBody] Enrollments model)
         {
             Response response = new Response();
-            if (model.classid == 0 )
+            if (model.classid == 0)
             {
                 response.statuscode = 400;
                 response.statusmessage = "Invalid data";
                 return response;
             }
-            bool alreadyexisted = dbcontext.enrollments.Any(s => s.studentid == model.studentid && s.classid==model.classid);
-            if(alreadyexisted)
+            bool alreadyexisted = dbcontext.enrollments.Any(s => s.studentid == model.studentid && s.classid == model.classid);
+            if (alreadyexisted)
             {
                 response.statuscode = 400;
                 response.statusmessage = "Same studentd already joined";
                 return response;
             }
-            Enrollments join= new Enrollments 
+            Enrollments join = new Enrollments
             {
-                classid=model.classid,
+                classid = model.classid,
                 courseid = model.courseid,
-                studentid=model.studentid,
+                studentid = model.studentid,
             };
 
             dbcontext.enrollments.Add(join);
@@ -334,7 +334,7 @@ namespace vrwebapi.Controllers
 
         public Response Addteacher([FromBody] Teacher model)
         {
-            Response response=new Response();
+            Response response = new Response();
             bool existingstudent = dbcontext.students.Any(s => s.userid == model.userid);
             if (existingstudent)
             {
@@ -344,8 +344,8 @@ namespace vrwebapi.Controllers
             }
             Teacher teacher = new Teacher
             {
-                userid=model.userid,
-                department=model.department
+                userid = model.userid,
+                department = model.department
             };
             dbcontext.teachers.Add(teacher);
             dbcontext.SaveChanges();
@@ -370,10 +370,10 @@ namespace vrwebapi.Controllers
             }
             Student student = new Student
             {
-                userid=model.userid,
-                cgpa=model.cgpa,
-                program=model.program,
-                rollno=model.rollno
+                userid = model.userid,
+                cgpa = model.cgpa,
+                program = model.program,
+                rollno = model.rollno
             };
             dbcontext.students.Add(student);
             dbcontext.SaveChanges();
@@ -410,9 +410,9 @@ namespace vrwebapi.Controllers
         {
             Response response = new Response();
             int student = dbcontext.students.Include(u => u.user).Where(u => u.user.Name == model.name).Select(s => s.studentid).FirstOrDefault();
-            if(student != 0)
+            if (student != 0)
             {
-                response.statuscode = 200;  
+                response.statuscode = 200;
                 response.statusmessage = student.ToString();
                 return response;
             }
@@ -430,7 +430,7 @@ namespace vrwebapi.Controllers
         {
             Response response = new Response();
             int course = dbcontext.classes.Include(c => c.course).Where(cl => cl.classid == model.classid).Select(c => c.courseid).FirstOrDefault();
-            if(course!=0)
+            if (course != 0)
             {
                 response.statuscode = 200;
                 response.statusmessage = course.ToString();
@@ -449,7 +449,7 @@ namespace vrwebapi.Controllers
         public Response courseid([FromBody] Name model)
         {
             Response response = new Response();
-            int course = dbcontext.courses.Where(c=>c.coursename== model.name).Select(c=>c.courseid).FirstOrDefault();
+            int course = dbcontext.courses.Where(c => c.coursename == model.name).Select(c => c.courseid).FirstOrDefault();
             if (course != 0)
             {
                 response.statuscode = 200;
@@ -491,15 +491,15 @@ namespace vrwebapi.Controllers
         public Response Addassignment([FromBody] Assignment model)
         {
             Response response = new Response();
-            Assignment assignment = new Assignment 
-            { 
-                courseid=model.courseid,
-                classid=model.classid,
-                aname=model.aname,
-                dated=model.dated,
-                duedate=model.duedate,
-                time=model.time,
-                description=model.description
+            Assignment assignment = new Assignment
+            {
+                courseid = model.courseid,
+                classid = model.classid,
+                aname = model.aname,
+                dated = model.dated,
+                duedate = model.duedate,
+                time = model.time,
+                description = model.description
             };
 
             dbcontext.assignments.Add(assignment);
@@ -516,23 +516,23 @@ namespace vrwebapi.Controllers
 
         public Response Isteacher()
         {
-            Response response=new Response();
+            Response response = new Response();
             ClaimsPrincipal userclaim = User;
 
             var identity = userclaim.Identity as ClaimsIdentity;
 
-            if(identity != null)
+            if (identity != null)
             {
                 var claims = identity.Claims;
-                var email= claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-                if(email != null)
+                var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                if (email != null)
                 {
-                    int teacher = dbcontext.teachers.Include(u => u.user).Where(u => u.user.Email == email.Value).Select(t=>t.teacherid).FirstOrDefault();
-                    if(teacher!= 0)
+                    int teacher = dbcontext.teachers.Include(u => u.user).Where(u => u.user.Email == email.Value).Select(t => t.teacherid).FirstOrDefault();
+                    if (teacher != 0)
                     {
-                        bool isteacher=true;
+                        bool isteacher = true;
                         response.statuscode = 200;
-                        response.statusmessage =isteacher.ToString();
+                        response.statusmessage = isteacher.ToString();
                         return response;
                     }
                     else
@@ -563,7 +563,7 @@ namespace vrwebapi.Controllers
         public Response Teacherid([FromBody] Name model)
         {
             Response response = new Response();
-            int student = dbcontext.teachers.Include(u => u.user).Where(u => u.user.Name == model.name).Select(t=>t.teacherid).FirstOrDefault();
+            int student = dbcontext.teachers.Include(u => u.user).Where(u => u.user.Name == model.name).Select(t => t.teacherid).FirstOrDefault();
             if (student != 0)
             {
                 response.statuscode = 200;
@@ -591,10 +591,10 @@ namespace vrwebapi.Controllers
                 response.statusmessage = "Same teacher already joined";
                 return response;
             }
-            Teacherassigned teacher = new Teacherassigned 
-            { 
-                classid=model.classid,
-                teacherid=model.teacherid
+            Teacherassigned teacher = new Teacherassigned
+            {
+                classid = model.classid,
+                teacherid = model.teacherid
 
 
             };
@@ -624,11 +624,11 @@ namespace vrwebapi.Controllers
                 var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
                 if (email != null)
                 {
-                    int studentid = dbcontext.teachers.Include(u => u.user).Where(u => u.user.Email == email.Value).Select(t=>t.teacherid).FirstOrDefault();
+                    int studentid = dbcontext.teachers.Include(u => u.user).Where(u => u.user.Email == email.Value).Select(t => t.teacherid).FirstOrDefault();
 
                     if (studentid != 0)
                     {
-                        var list = dbcontext.teacherassigneds.Include(c => c.classes).Where(t=>t.teacherid == studentid).Select(c => c.classes).ToList();
+                        var list = dbcontext.teacherassigneds.Include(c => c.classes).Where(t => t.teacherid == studentid).Select(c => c.classes).ToList();
                         if (list != null)
                         {
                             response.statuscode = 200;
@@ -665,5 +665,27 @@ namespace vrwebapi.Controllers
                 return response;
             }
         }
+
+        [HttpPost("GetAssignment")]
+
+        public Response GetAssignments([FromBody] Name model)
+        {
+            Response response = new Response();
+            var list = dbcontext.assignments.Include(cl => cl.Classes).Where(cl => cl.Classes.classname == model.name).ToList();
+            if(list!=null)
+            {
+                response.statuscode = 200;
+                response.statusmessage = "Assignments";
+                response.assignment = list;
+                return response;
+            }
+            else
+            {
+                response.statuscode = 400;
+                response.statusmessage = "Assignments Not Found";
+                return response;
+            }
+        }
+
     }
 }

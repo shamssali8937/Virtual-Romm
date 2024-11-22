@@ -12,5 +12,7 @@ public class Response
 
     public List<Classes>? classes { get; set; }
 
+    public List<Assignment>? assignment { get; set; }
+
 
 }
