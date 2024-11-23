@@ -694,12 +694,19 @@ namespace vrwebapi.Controllers
         public Response submit([FromBody] Submission model)
         {
             Response response = new Response();
+            var id = dbcontext.submissions.Any(s => s.studentid == model.studentid && s.aid == model.aid);
+            if(id)
+            {
+                response.statuscode = 100;
+                response.statusmessage = "Already submited";
+                return response;
+            }
             var submission = new Submission { 
                 aid=model.aid,
                 studentid=model.studentid,
                 description=model.description,
                 file=model.file,
-                issubmit=true
+                issubmit=model.issubmit
             };
 
             dbcontext.submissions.Add(submission);
@@ -717,12 +724,15 @@ namespace vrwebapi.Controllers
             Response response = new Response();
             var list = dbcontext.submissions.Include(a => a.assignment).Where(a => a.assignment.aid == model.Id).Select(a => new submissiondetail
             {
-                Assignment = a.assignment,
+                aname=a.assignment.aname,
+                assignmentid = a.assignment.aid,
                 submissionid = a.sid,
+                description=a.description,
+                file=a.file,
                 student = a.student.user.Name
             }).ToList();
 
-            if(list!=null)
+            if(list.Any())
             {
                 response.statuscode = 200;
                 response.statusmessage = "found";
@@ -735,6 +745,36 @@ namespace vrwebapi.Controllers
                 response.statusmessage = "not found";
                 return response;
             }
+
+        }
+
+        [HttpPost("Grade")]
+
+        public Response Grade([FromBody] Grades model)
+        {
+            Response response = new Response();
+
+            var exists = dbcontext.grades.Any(g => g.sid == model.sid);
+            if(exists)
+            {
+                response.statuscode = 100;
+                response.statusmessage = "already Graded";
+                return response;
+            }
+
+            var grade = new Grades
+            {
+                sid = model.sid,
+                grades=model.grades,
+                comments=model.comments
+            };
+
+            dbcontext.grades.Add(grade);
+            dbcontext.SaveChanges();
+
+            response.statuscode = 200;
+            response.statusmessage = "Graded";
+            return response;
 
         }
 
