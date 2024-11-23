@@ -499,7 +499,9 @@ namespace vrwebapi.Controllers
                 dated = model.dated,
                 duedate = model.duedate,
                 time = model.time,
-                description = model.description
+                description = model.description,
+                file=model.file
+
             };
 
             dbcontext.assignments.Add(assignment);
@@ -696,7 +698,8 @@ namespace vrwebapi.Controllers
                 aid=model.aid,
                 studentid=model.studentid,
                 description=model.description,
-                file=model.file
+                file=model.file,
+                issubmit=true
             };
 
             dbcontext.submissions.Add(submission);

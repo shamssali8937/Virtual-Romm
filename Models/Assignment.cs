@@ -21,11 +21,13 @@ namespace vrwebapi.Models
 
         public string aname { get; set; }
 
-        public DateOnly dated { get; set; }
+        public string dated { get; set; }
 
-        public DateOnly duedate { get; set; }
+        public string duedate { get; set; }
 
         public TimeOnly time { get; set; }
+
+        public string file { get; set; }
 
         public string description { get; set; }
     }

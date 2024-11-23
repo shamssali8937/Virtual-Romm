@@ -12,7 +12,7 @@ using vrwebapi.Data;
 namespace vrwebapi.Migrations
 {
     [DbContext(typeof(vrdbcontext))]
-    [Migration("20241112134254_intial")]
+    [Migration("20241123091811_intial")]
     partial class intial
     {
         /// <inheritdoc />
@@ -43,15 +43,21 @@ namespace vrwebapi.Migrations
                     b.Property<int>("courseid")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("dated")
-                        .HasColumnType("date");
+                    b.Property<string>("dated")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("duedate")
-                        .HasColumnType("date");
+                    b.Property<string>("duedate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("file")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeOnly>("time")
                         .HasColumnType("time");
@@ -213,6 +219,9 @@ namespace vrwebapi.Migrations
                     b.Property<string>("file")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("issubmit")
+                        .HasColumnType("bit");
 
                     b.Property<int>("studentid")
                         .HasColumnType("int");

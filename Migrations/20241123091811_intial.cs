@@ -113,9 +113,10 @@ namespace vrwebapi.Migrations
                     courseid = table.Column<int>(type: "int", nullable: false),
                     classid = table.Column<int>(type: "int", nullable: false),
                     aname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    dated = table.Column<DateOnly>(type: "date", nullable: false),
-                    duedate = table.Column<DateOnly>(type: "date", nullable: false),
+                    dated = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    duedate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     time = table.Column<TimeOnly>(type: "time", nullable: false),
+                    file = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -203,6 +204,7 @@ namespace vrwebapi.Migrations
                     aid = table.Column<int>(type: "int", nullable: false),
                     studentid = table.Column<int>(type: "int", nullable: false),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    issubmit = table.Column<bool>(type: "bit", nullable: false),
                     file = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>

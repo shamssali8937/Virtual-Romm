@@ -20,6 +20,8 @@ namespace vrwebapi.Models
 
         public string description { get; set; }
 
+        public bool issubmit { get; set; }
+
         public string file { get; set; }
 
     }
