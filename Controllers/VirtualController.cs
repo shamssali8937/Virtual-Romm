@@ -729,7 +729,8 @@ namespace vrwebapi.Controllers
                 submissionid = a.sid,
                 description=a.description,
                 file=a.file,
-                student = a.student.user.Name
+                student = a.student.user.Name,
+                issubmit=a.issubmit
             }).ToList();
 
             if(list.Any())
@@ -776,6 +777,74 @@ namespace vrwebapi.Controllers
             response.statusmessage = "Graded";
             return response;
 
+        }
+
+        [Authorize]
+        [HttpGet("checkgrades")]
+
+        public Response checkgrades()
+        {
+            Response response = new Response();
+
+            ClaimsPrincipal userclaims = User;
+            var identity = userclaims.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                var claim = identity.Claims;
+                var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                if (email != null)
+                {
+                    string name = dbcontext.students.Include(u => u.user).Where(u => u.user.Email == email.Value).Select(s => s.user.Name).FirstOrDefault();
+
+                    if (name!=null)
+                    {
+                        var list = dbcontext.grades.Include(s => s.submission).ThenInclude(a => a.assignment).Where(g => g.submission.student.user.Name == name).Select(g => new Gradedetail
+                        {
+                            aname = g.submission.assignment.aname,
+                            description = g.submission.description,
+                            comments = g.comments,
+                            grade = g.grades
+                        }).ToList();
+
+                        if (list.Any())
+                        {
+                            response.statuscode = 200;
+                            response.statusmessage = "found";
+                            response.grades = list;
+                            return response;
+                        }
+                        else
+                        {
+                            response.statuscode = 100;
+                            response.statusmessage = "not found";
+                            return response;
+                        }
+
+                    }
+                    else
+                    {
+                        response.statuscode = 100;
+                        response.statusmessage = "no student exist";
+                        return response;
+                    }
+
+                }
+                else
+                {
+                    response.statuscode = 100;
+                    response.statusmessage = "no user exist";
+                    return response;
+                }
+            }
+            else
+            {
+                response.statuscode = 100;
+                response.statusmessage = "error";
+                return response;
+            }
+
+         
         }
 
     }

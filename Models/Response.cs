@@ -16,4 +16,6 @@ public class Response
 
     public List<submissiondetail>? submission { get; set; }
 
+    public List<Gradedetail> grades { get; set; }
+
 }

@@ -10,5 +10,6 @@
         public string description { get; set; }
         public string file { get; set; }
         public string student { get; set; }
+        public bool issubmit { get; set; }
     }
 }
