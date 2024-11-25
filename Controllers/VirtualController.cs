@@ -780,9 +780,9 @@ namespace vrwebapi.Controllers
         }
 
         [Authorize]
-        [HttpGet("checkgrades")]
+        [HttpPost("checkgrades")]
 
-        public Response checkgrades()
+        public Response checkgrades([FromBody] Name model)
         {
             Response response = new Response();
 
@@ -799,8 +799,9 @@ namespace vrwebapi.Controllers
 
                     if (name!=null)
                     {
-                        var list = dbcontext.grades.Include(s => s.submission).ThenInclude(a => a.assignment).Where(g => g.submission.student.user.Name == name).Select(g => new Gradedetail
+                        var list = dbcontext.grades.Include(s => s.submission).ThenInclude(a => a.assignment).Where(g => g.submission.student.user.Name == name && g.submission.assignment.Classes.classname==model.name).Select(g => new Gradedetail
                         {
+                            id=g.gid,
                             aname = g.submission.assignment.aname,
                             description = g.submission.description,
                             comments = g.comments,
@@ -843,9 +844,29 @@ namespace vrwebapi.Controllers
                 response.statusmessage = "error";
                 return response;
             }
-
-         
         }
+
+        [HttpPost("issubmited")]
+
+        public Response issubmited([FromBody] Name model)
+        {
+            Response response = new Response();
+            bool exists = dbcontext.submissions.Any(s => s.aid == int.Parse(model.name));
+
+            if(exists)
+            {
+                response.statuscode = 200;
+                response.statusmessage = exists.ToString();
+                return response;
+            }
+            else
+            {
+                response.statuscode = 100;
+                response.statusmessage = "not found";
+                return response;
+            }
+        }
+
 
     }
 }
