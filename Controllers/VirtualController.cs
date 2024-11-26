@@ -493,9 +493,16 @@ namespace vrwebapi.Controllers
         {
             Response response = new Response();
 
-            string path = Path.Combine(@"E:\VRFiles", model.aname + ".pdf");
+            string uploadsfolder = Path.Combine(Directory.GetCurrentDirectory() ,"UploadedFiles");
+            if (!Directory.Exists(uploadsfolder))
+            {
+                Directory.CreateDirectory(uploadsfolder);
+            }
 
-            using(Stream stream=new FileStream(path,FileMode.Create))
+            string path = Path.Combine(uploadsfolder, model.description + ".pdf");
+
+
+            using (Stream stream=new FileStream(path,FileMode.Create))
             {
                 model.file.CopyTo(stream);
             }
@@ -700,9 +707,23 @@ namespace vrwebapi.Controllers
 
         [HttpPost("submit")]
 
-        public Response submit([FromBody] Submission model)
+        public Response submit([FromForm] Submitupload model)
         {
             Response response = new Response();
+
+            string uploadsfolder = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles");
+            if (!Directory.Exists(uploadsfolder))
+            {
+                Directory.CreateDirectory(uploadsfolder);
+            }
+
+            string path = Path.Combine(uploadsfolder, model.description + ".pdf");
+
+            using (Stream stream = new FileStream(path, FileMode.Create))
+            {
+                model.file.CopyTo(stream);
+            }
+
             var id = dbcontext.submissions.Any(s => s.studentid == model.studentid && s.aid == model.aid);
             if(id)
             {
@@ -714,7 +735,7 @@ namespace vrwebapi.Controllers
                 aid=model.aid,
                 studentid=model.studentid,
                 description=model.description,
-                file=model.file,
+                file=path,
                 issubmit=model.issubmit
             };
 
