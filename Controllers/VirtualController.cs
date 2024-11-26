@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using vrwebapi.Data;
 using vrwebapi.Models;
+using vrwebapi.UploadModels;
 
 
 namespace vrwebapi.Controllers
@@ -488,9 +489,17 @@ namespace vrwebapi.Controllers
 
         [HttpPost("Addassignment")]
 
-        public Response Addassignment([FromBody] Assignment model)
+        public Response Addassignment([FromForm] Assignmentupload model)
         {
             Response response = new Response();
+
+            string path = Path.Combine(@"E:\VRFiles", model.aname + ".pdf");
+
+            using(Stream stream=new FileStream(path,FileMode.Create))
+            {
+                model.file.CopyTo(stream);
+            }
+
             Assignment assignment = new Assignment
             {
                 courseid = model.courseid,
@@ -500,7 +509,7 @@ namespace vrwebapi.Controllers
                 duedate = model.duedate,
                 time = model.time,
                 description = model.description,
-                file=model.file
+                file=path
 
             };
 
