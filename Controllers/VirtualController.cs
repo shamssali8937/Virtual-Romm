@@ -493,16 +493,23 @@ namespace vrwebapi.Controllers
         {
             Response response = new Response();
 
-            string uploadsfolder = Path.Combine(Directory.GetCurrentDirectory() ,"UploadedFiles");
+
+            string mainpath = Path.Combine("wwwRoot", "Uploadedfiles");
+            string uploadsfolder = Path.Combine(Directory.GetCurrentDirectory(),mainpath);
+
             if (!Directory.Exists(uploadsfolder))
             {
                 Directory.CreateDirectory(uploadsfolder);
             }
 
-            string path = Path.Combine(uploadsfolder, model.description + ".pdf");
+
+            string filename = model.aname + ".pdf";
+            string filepath = Path.Combine(uploadsfolder,filename);
+
+            string path = Path.Combine("Uploadedfiles", filename);
 
 
-            using (Stream stream=new FileStream(path,FileMode.Create))
+            using (Stream stream=new FileStream(filepath,FileMode.Create))
             {
                 model.file.CopyTo(stream);
             }
@@ -711,15 +718,18 @@ namespace vrwebapi.Controllers
         {
             Response response = new Response();
 
-            string uploadsfolder = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles");
+            string mainpath = Path.Combine("wwwRoot", "Uploadedfiles");
+            string uploadsfolder = Path.Combine(Directory.GetCurrentDirectory(),mainpath);
             if (!Directory.Exists(uploadsfolder))
             {
                 Directory.CreateDirectory(uploadsfolder);
             }
 
-            string path = Path.Combine(uploadsfolder, model.description + ".pdf");
+            string filename = model.description + ".pdf";
+            string filepath = Path.Combine(uploadsfolder, filename);
 
-            using (Stream stream = new FileStream(path, FileMode.Create))
+            string path = Path.Combine("Uploadedfiles", filename);
+            using (Stream stream = new FileStream(filepath, FileMode.Create))
             {
                 model.file.CopyTo(stream);
             }
