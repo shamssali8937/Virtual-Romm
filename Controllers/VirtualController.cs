@@ -494,7 +494,7 @@ namespace vrwebapi.Controllers
             Response response = new Response();
 
 
-            string mainpath = Path.Combine("wwwRoot", "Uploadedfiles");
+            string mainpath = Path.Combine("wwwroot", "UploadedFiles");
             string uploadsfolder = Path.Combine(Directory.GetCurrentDirectory(),mainpath);
 
             if (!Directory.Exists(uploadsfolder))
@@ -506,7 +506,7 @@ namespace vrwebapi.Controllers
             string filename = model.aname + ".pdf";
             string filepath = Path.Combine(uploadsfolder,filename);
 
-            string path = Path.Combine("Uploadedfiles", filename);
+            string path = Path.Combine("UploadedFiles", filename);
 
 
             using (Stream stream=new FileStream(filepath,FileMode.Create))
@@ -531,7 +531,7 @@ namespace vrwebapi.Controllers
             dbcontext.SaveChanges();
 
             response.statuscode = 200;
-            response.statusmessage = "Assignment Assigned To The Class";
+            response.statusmessage = $"{Request.Scheme}://{Request.Host}/UploadedFiles/{filename}"; 
             return response;
 
         }
@@ -718,7 +718,7 @@ namespace vrwebapi.Controllers
         {
             Response response = new Response();
 
-            string mainpath = Path.Combine("wwwRoot", "Uploadedfiles");
+            string mainpath = Path.Combine("wwwroot", "UploadedFiles");
             string uploadsfolder = Path.Combine(Directory.GetCurrentDirectory(),mainpath);
             if (!Directory.Exists(uploadsfolder))
             {
@@ -728,7 +728,7 @@ namespace vrwebapi.Controllers
             string filename = model.description + ".pdf";
             string filepath = Path.Combine(uploadsfolder, filename);
 
-            string path = Path.Combine("Uploadedfiles", filename);
+            string path = Path.Combine("UploadedFiles", filename);
             using (Stream stream = new FileStream(filepath, FileMode.Create))
             {
                 model.file.CopyTo(stream);
