@@ -531,7 +531,7 @@ namespace vrwebapi.Controllers
             dbcontext.SaveChanges();
 
             response.statuscode = 200;
-            response.statusmessage = $"{Request.Scheme}://{Request.Host}/UploadedFiles/{filename}"; 
+            response.statusmessage = "Assignment Assigned to the class"; 
             return response;
 
         }
