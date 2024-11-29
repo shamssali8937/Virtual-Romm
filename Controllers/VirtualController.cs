@@ -724,6 +724,14 @@ namespace vrwebapi.Controllers
         {
             Response response = new Response();
 
+            var id = dbcontext.submissions.Any(s => s.studentid == model.studentid && s.aid == model.aid);
+            if (id)
+            {
+                response.statuscode = 100;
+                response.statusmessage = "Already submited";
+                return response;
+            }
+
             string mainpath = Path.Combine("wwwroot", "UploadedFiles");
             string uploadsfolder = Path.Combine(Directory.GetCurrentDirectory(),mainpath);
             if (!Directory.Exists(uploadsfolder))
@@ -748,13 +756,6 @@ namespace vrwebapi.Controllers
                 model.file.CopyTo(stream);
             }
 
-            var id = dbcontext.submissions.Any(s => s.studentid == model.studentid && s.aid == model.aid);
-            if(id)
-            {
-                response.statuscode = 100;
-                response.statusmessage = "Already submited";
-                return response;
-            }
             var submission = new Submission { 
                 aid=model.aid,
                 studentid=model.studentid,
@@ -923,7 +924,7 @@ namespace vrwebapi.Controllers
 
 
         [Authorize]
-        [HttpDelete("Exitclass")]
+        [HttpPost("Exitclass")]
 
         public Response Exitclass([FromBody] Name model)
         {
