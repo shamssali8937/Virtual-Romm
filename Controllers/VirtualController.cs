@@ -502,8 +502,14 @@ namespace vrwebapi.Controllers
                 Directory.CreateDirectory(uploadsfolder);
             }
 
+            if (model.file == null || model.file.ContentType != "application/pdf")
+            {
+                response.statuscode = 101;
+                response.statusmessage = "please Upload pdf only";
+                return response;
+            }
 
-            string filename = model.aname + ".pdf";
+            string filename = model.aname.Replace(" ", "_") + ".pdf";
             string filepath = Path.Combine(uploadsfolder,filename);
 
             string path = Path.Combine("UploadedFiles", filename);
@@ -725,10 +731,18 @@ namespace vrwebapi.Controllers
                 Directory.CreateDirectory(uploadsfolder);
             }
 
-            string filename = model.description + ".pdf";
+            if (model.file == null || model.file.ContentType != "application/pdf")
+            {
+                response.statuscode = 101;
+                response.statusmessage = "please Upload pdf only";
+                return response;
+            }
+
+            string filename = model.description.Replace(" ","_") + ".pdf";
             string filepath = Path.Combine(uploadsfolder, filename);
 
             string path = Path.Combine("UploadedFiles", filename);
+
             using (Stream stream = new FileStream(filepath, FileMode.Create))
             {
                 model.file.CopyTo(stream);
@@ -908,5 +922,81 @@ namespace vrwebapi.Controllers
         }
 
 
+        [Authorize]
+        [HttpDelete("Exitclass")]
+
+        public Response Exitclass([FromBody] Name model)
+        {
+            Response response = new Response();
+            ClaimsPrincipal userclaim = User;
+
+            var identity = userclaim.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                var claim = identity.Claims;
+                var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                if (email != null)
+                {
+                    var user = dbcontext.users.FirstOrDefault(u => u.Email == email.Value);
+                    if (user != null)
+                    {
+                        var isstudent = dbcontext.students.Any(s => s.user.userid == user.userid);
+                        if(isstudent)
+                        {
+                            var student = dbcontext.enrollments.Include(e => e.student).ThenInclude(s => s.user).Include(e => e.classes).FirstOrDefault(e => e.student.user.username == user.username && e.classes.classname == model.name);
+
+                            if (student != null)
+                            {
+                                dbcontext.enrollments.Remove(student);
+                                dbcontext.SaveChanges();
+                                response.statuscode = 200;
+                                response.statusmessage = "Removed";
+                                return response;
+                            }
+                            else
+                            {
+                                response.statuscode = 100;
+                                response.statusmessage = "Error in Removing student";
+                                return response;
+                            }
+                        }
+                        else
+                        {
+
+                            var teacher = dbcontext.teacherassigneds.Include(ta => ta.classes).Include(ta => ta.teacher).ThenInclude(t => t.user).FirstOrDefault(ta => ta.teacher.user.username == user.username  && ta.classes.classname == model.name);
+
+
+                            if (teacher != null)
+                            {
+                                dbcontext.teacherassigneds.Remove(teacher);
+                                dbcontext.SaveChanges();
+                                response.statuscode = 200;
+                                response.statusmessage = "teacher Removed";
+                                return response;
+                            }
+                            else
+                            {
+                                response.statuscode = 100;
+                                response.statusmessage = "Error in Removing teacher";
+                                return response;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        response.statuscode = 100;
+                        response.statusmessage = "No user";
+                        return response;
+                    }
+
+                }
+            }
+            response.statuscode = 100;
+            response.statusmessage = "error";
+            return response;
+        }
+
     }
+
 }
