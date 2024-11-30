@@ -12,7 +12,7 @@ using vrwebapi.Data;
 namespace vrwebapi.Migrations
 {
     [DbContext(typeof(vrdbcontext))]
-    [Migration("20241123091811_intial")]
+    [Migration("20241130093839_intial")]
     partial class intial
     {
         /// <inheritdoc />
