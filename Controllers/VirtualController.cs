@@ -900,26 +900,64 @@ namespace vrwebapi.Controllers
                 return response;
             }
         }
-
+        [Authorize]
         [HttpPost("issubmited")]
 
         public Response issubmited([FromBody] Name model)
         {
             Response response = new Response();
-            bool exists = dbcontext.submissions.Any(s => s.aid == int.Parse(model.name));
 
-            if(exists)
+
+            ClaimsPrincipal userclaims = User;
+            var identity = userclaims.Identity as ClaimsIdentity;
+
+            if (identity != null)
             {
-                response.statuscode = 200;
-                response.statusmessage = exists.ToString();
-                return response;
+                var claim = identity.Claims;
+                var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                if (email != null)
+                {
+                    int studentid = dbcontext.students.Include(u => u.user).Where(u => u.user.Email == email.Value).Select(s => s.studentid).FirstOrDefault();
+
+                    if (studentid != 0)
+                    {
+                        bool exists = dbcontext.submissions.Any(s => s.aid == int.Parse(model.name)&&s.studentid==studentid);
+
+                        if (exists)
+                        {
+                            response.statuscode = 200;
+                            response.statusmessage = exists.ToString();
+                            return response;
+                        }
+                        else
+                        {
+                            response.statuscode = 100;
+                            response.statusmessage = "false";
+                            return response;
+                        }
+                    }
+                    else
+                    {
+                        response.statuscode = 100;
+                        response.statusmessage = "no student exist";
+                        return response;
+                    }
+
+                }
+                else
+                {
+                    response.statuscode = 100;
+                    response.statusmessage = "no user exist";
+                    return response;
+                }
             }
             else
             {
                 response.statuscode = 100;
-                response.statusmessage = "not found";
+                response.statusmessage = "error";
                 return response;
             }
+        
         }
 
 
@@ -996,6 +1034,32 @@ namespace vrwebapi.Controllers
             response.statuscode = 100;
             response.statusmessage = "error";
             return response;
+        }
+
+
+        
+        [HttpPost("isgraded")]
+
+        public Response isgraded([FromBody] Name model)
+        {
+            Response response = new Response();
+
+            bool exists = dbcontext.grades.Any(s => s.sid == int.Parse(model.name));
+
+            if (exists)
+            {
+                response.statuscode = 200;
+                response.statusmessage = exists.ToString();
+                return response;
+            }
+            else
+            {
+                response.statuscode = 100;
+                response.statusmessage = "false";
+                return response;
+            }
+
+
         }
 
     }
