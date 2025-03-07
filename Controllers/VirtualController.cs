@@ -1058,8 +1058,6 @@ namespace vrwebapi.Controllers
                 response.statusmessage = "false";
                 return response;
             }
-
-
         }
 
     }
