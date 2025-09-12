@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace vrwebapi.Migrations
 {
     /// <inheritdoc />
-    public partial class intial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -127,7 +127,7 @@ namespace vrwebapi.Migrations
                         column: x => x.classid,
                         principalTable: "classes",
                         principalColumn: "classid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_assignments_courses_courseid",
                         column: x => x.courseid,
@@ -154,7 +154,7 @@ namespace vrwebapi.Migrations
                         column: x => x.classid,
                         principalTable: "classes",
                         principalColumn: "classid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_enrollments_courses_courseid",
                         column: x => x.courseid,
@@ -166,7 +166,7 @@ namespace vrwebapi.Migrations
                         column: x => x.studentid,
                         principalTable: "students",
                         principalColumn: "studentid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -186,13 +186,13 @@ namespace vrwebapi.Migrations
                         column: x => x.classid,
                         principalTable: "classes",
                         principalColumn: "classid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_teacherassigneds_teachers_teacherid",
                         column: x => x.teacherid,
                         principalTable: "teachers",
                         principalColumn: "teacherid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -215,13 +215,13 @@ namespace vrwebapi.Migrations
                         column: x => x.aid,
                         principalTable: "assignments",
                         principalColumn: "aid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_submissions_students_studentid",
                         column: x => x.studentid,
                         principalTable: "students",
                         principalColumn: "studentid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -242,7 +242,7 @@ namespace vrwebapi.Migrations
                         column: x => x.sid,
                         principalTable: "submissions",
                         principalColumn: "sid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(

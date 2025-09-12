@@ -12,15 +12,15 @@ using vrwebapi.Data;
 namespace vrwebapi.Migrations
 {
     [DbContext(typeof(vrdbcontext))]
-    [Migration("20241130093839_intial")]
-    partial class intial
+    [Migration("20250910174933_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
