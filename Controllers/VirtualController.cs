@@ -718,6 +718,27 @@ namespace vrwebapi.Controllers
             }
         }
 
+        [HttpPost("getassignmentbyid")]
+
+        public Response getassignmentbyid([FromBody] Assignmentid model)
+        {
+            Response response = new Response();
+            var assignment = dbcontext.assignments.Include(cl => cl.Classes).FirstOrDefault(a => a.aid == model.Id);
+            if (assignment != null)
+            {
+                response.statuscode = 200;
+                response.statusmessage = "Assignment Found";
+                response.assignment = new List<Assignment> { assignment };
+                return response;
+            }
+            else
+            {
+                response.statuscode = 400;
+                response.statusmessage = "Assignment Not Found";
+                return response;
+            }
+        }
+
         [HttpPost("submit")]
 
         public Response submit([FromForm] Submitupload model)
